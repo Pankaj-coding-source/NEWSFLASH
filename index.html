@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEWSFLASH UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Inter for clean UI; fallback to system fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f0f12;
+      --card:#17171c;
+      --muted:#9aa0a6;
+      --text:#e9eaee;
+      --accent:#4f7cff;
+      --accent-2:#00c2a8;
+      --danger:#ff5a5f;
+      --warning:#ffb020;
+      --chip:#22232a;
+      --border:#2a2c33;
+      --link:#7aa2ff;
+      --success:#2ecc71;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    }
+
+    /* Phone frame */
+    .phone{
+      width:360px;
+      height:720px;
+      margin:24px auto;
+      border-radius:28px;
+      background:linear-gradient(180deg, #121317 0%, #0e0f13 100%);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,.45),
+        inset 0 0 0 1px rgba(255,255,255,.04);
+      position:relative;
+      padding:18px 16px 22px;
+    }
+
+    /* Status bar mock */
+    .status{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .status .dots{
+      display:flex; gap:4px;
+    }
+    .dot{width:4px;height:4px;border-radius:50%;background:#3a3d45;opacity:.9}
+
+    /* App header */
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:6px 0 14px;
+    }
+    .logo{
+      font-weight:800;
+      letter-spacing:.6px;
+      font-size:18px;
+      color:#fff;
+    }
+    .logo::before{
+      content:"";
+      display:inline-block;
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      margin-right:8px;
+      vertical-align:middle;
+      box-shadow:0 0 12px rgba(79,124,255,.6);
+    }
+
+    /* Search bar */
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+    }
+    .search .icon{
+      width:18px;height:18px;border-radius:50%;
+      background:linear-gradient(135deg, #3b3f48, #2a2d35);
+      position:relative;
+    }
+    .search .icon::after{
+      content:"";
+      position:absolute;
+      width:8px;height:8px;border:2px solid #8ea2c9;border-radius:50%;
+      top:3px;left:3px;
+    }
+    .search .icon::before{
+      content:"";
+      position:absolute;
+      width:2px;height:6px;background:#8ea2c9;border-radius:1px;
+      right:2px;bottom:2px;transform:rotate(45deg);
+    }
+    .search input{
+      flex:1;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:var(--text);
+      font-size:14px;
+    }
+    .search input::placeholder{color:#7b8088}
+
+    /* Section title */
+    .section-title{
+      margin:14px 2px 10px;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.5px;
+      color:#a0a6ac;
+      text-transform:uppercase;
+    }
+
+    /* City chips */
+    .cities{
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .city{
+      width:64px;height:64px;border-radius:50%;
+      background:linear-gradient(180deg, #1c1d23, #14151a);
+      border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      color:#cfd3da;
+      font-size:12px;
+      text-align:center;
+      line-height:1.1;
+      padding:8px;
+      position:relative;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .city:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.35)}
+    .city.active{
+      border-color:var(--accent);
+      box-shadow:0 0 0 2px rgba(79,124,255,.25), 0 10px 18px rgba(79,124,255,.25);
+      color:#fff;
+    }
+    .city.active::after{
+      content:"";
+      position:absolute;bottom:6px;right:6px;
+      width:10px;height:10px;border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 10px rgba(79,124,255,.7);
+    }
+
+    /* Trending chips */
+    .chips{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--border);
+      color:#cfd3da;
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      transition:background .15s ease, border-color .15s ease;
+    }
+    .chip:hover{background:#262833;border-color:#3a3d45}
+
+    /* Results list */
+    .list{
+      margin-top:10px;
+      display:flex; flex-direction:column; gap:12px;
+      counter-reset: item-counter;
+    }
+    .item{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:0 8px 16px rgba(0,0,0,.25);
+      display:flex; gap:10px;
+      position:relative;
+      counter-increment: item-counter;
+    }
+    .item::before{
+      content: counter(item-counter);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:24px;
+      height:24px;
+      background:linear-gradient(135deg, #4f7cff, #00c2a8);
+      border-radius:50%;
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      flex-shrink:0;
+    }
+    .item-content{
+      flex:1;
+    }
+    .item h4{
+      margin:0 0 6px;
+      font-size:14px;
+      color:#f2f3f6;
+      font-weight:700;
+      line-height:1.3;
+    }
+    .meta{
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      font-size:12px; color:#b8bdc7;
+    }
+    .meta .source{
+      padding:4px 8px; border-radius:999px;
+      background:#1f2026; border:1px solid #2a2c33;
+      color:#cfd3da;
+    }
+    .meta a{
+      color:var(--link);
+      text-decoration:none;
+    }
+    .meta a:hover{text-decoration:underline}
+
+    /* Alerts */
+    .alert{
+      margin-top:16px;
+      background:#1b1c22;
+      border:1px solid #2a2c33;
+      border-left:4px solid var(--danger);
+      border-radius:12px;
+      padding:12px;
+      color:#f2f3f6;
+      box-shadow:0 8px 16px rgba(0,0,0,.25);
+    }
+    .alert h5{
+      margin:0 0 6px; font-size:14px; font-weight:700; color:#ffb3b5;
+    }
+    .alert p{margin:0; font-size:13px; color:#dcdfe4}
+
+    .empty{
+      margin-top:24px;
+      text-align:center;
+      color:#cfd3da;
+    }
+    .empty .bubble{
+      width:64px;height:64px;border-radius:50%;
+      margin:0 auto 12px;
+      background:radial-gradient(circle at 30% 30%, #2a2d35, #1a1c22);
+      box-shadow:0 10px 20px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
+      position:relative;
+    }
+    .empty .bubble::after{
+      content:"";
+      position:absolute; right:14px; bottom:14px;
+      width:14px;height:14px;border-radius:50%;
+      background:var(--warning);
+      box-shadow:0 0 12px rgba(255,176,32,.6);
+    }
+    .empty h4{margin:0 0 6px; font-size:14px; font-weight:700}
+    .empty p{margin:0; font-size:13px; color:#b8bdc7}
+
+    /* Screen toggles */
+    .screen{display:none}
+    .screen.active{display:block}
+
+    /* Footer hint */
+    .hint{
+      position:absolute; bottom:14px; left:0; right:0;
+      text-align:center; font-size:11px; color:#8a8f98;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Home with cities + trending -->
+  <div class="phone screen active" id="screen-1">
+    <div class="status">
+      
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" placeholder="Enter location:" />
+    </div>
+
+    <div class="section-title">POPULAR LOCATIONS</div>
+    <div class="cities">
+      <div class="city">New<br>York</div>
+      <div class="city">London</div>
+      <div class="city">Tokyo</div>
+      <div class="city">Paris</div>
+    </div>
+
+    <div class="section-title">TRENDING TOPICS</div>
+    <div class="chips">
+      <div class="chip">#TECHNOLOGY</div>
+      <div class="chip">#CLIMATE</div>
+      <div class="chip">#SPORTS</div>
+    </div>
+
+    <div class="hint">Screen 1 — Home</div>
+  </div>
+
+  <!-- Screen 2: City selection state (Setelost selected) -->
+  <div class="phone screen" id="screen-2">
+    <div class="status">
+      <div>9:41</div>
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" placeholder="Enter location:" />
+    </div>
+
+    <div class="section-title">POPULAR LOCATIONS</div>
+    <div class="cities">
+      <div class="city active">Setelost</div>
+      <div class="city">London</div>
+      <div class="city">Tokyo</div>
+      <div class="city">Paris</div>
+    </div>
+
+    <div class="hint">Screen 2 — City selected</div>
+  </div>
+
+  <!-- Screen 3: Results for London (variant A) -->
+  <div class="phone screen" id="screen-3">
+    <div class="status">
+     
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" value="London" />
+    </div>
+
+    <div class="list">
+      <div class="item">
+        <div class="item-content">
+          <h4>London Bridge closed due to security alert</h4>
+          <div class="meta">
+            <span class="source">BBC News</span>
+            <a href="#">bbc.co.uk/news...</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-content">
+          <h4>New zero-emission bus fleet</h4>
+          <div class="meta">
+            <span class="source">The Guardian</span>
+            <a href="#">guardian.co.uk...</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-content">
+          <h4>London Marathon results</h4>
+          <div class="meta">
+            <span class="source">BBC News</span>
+            <a href="#">bbc.co.uk/news...</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Screen 3 — London results A</div>
+  </div>
+
+  <!-- Screen 4: Error state (invalid/missing API key) -->
+  <div class="phone screen" id="screen-4">
+    <div class="status">
+      <div>9:41</div>
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" placeholder="Enter location:" />
+    </div>
+
+    <div class="alert">
+      <h5>Error: Invalid or missing API key</h5>
+      <p>Please check your API key</p>
+    </div>
+
+    <div class="hint">Screen 4 — Error state</div>
+  </div>
+
+  <!-- Screen 5: Results for London (variant B) -->
+  <div class="phone screen" id="screen-5">
+    <div class="status">
+      <div>9:41</div>
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" value="London" />
+    </div>
+
+    <div class="list">
+      <div class="item">
+        <div class="item-content">
+          <h4>New zero-emission bus fleet for London</h4>
+          <div class="meta">
+            <span class="source">BBC News</span>
+            <a href="#">bbc.co.uk/news...</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-content">
+          <h4>West End show extends run</h4>
+          <div class="meta">
+            <span class="source">The Guardian</span>
+            <a href="#">guardian.co.uk...</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-content">
+          <h4>Local election outcomes</h4>
+          <div class="meta">
+            <span class="source">BBC News</span>
+            <a href="#">bbc.co.uk/news...</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Screen 5 — London results B</div>
+  </div>
+
+  <!-- Screen 6: Empty state (no results for Mars) -->
+  <div class="phone screen" id="screen-6">
+    <div class="status">
+     
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <div class="header"><div class="logo">NEWSFLASH</div></div>
+
+    <div class="search">
+      <div class="icon"></div>
+      <input type="text" value="Mars" />
+    </div>
+
+    <div class="empty">
+      <div class="bubble"></div>
+      <h4>No news articles found for this location</h4>
+      <p>Try a different place or check spelling</p>
+    </div>
+
+    
+  </div>
+
+</body>
+</html>
+
+<script>
+  // State management
+  const state = {
+    currentScreen: 'screen-1',
+    searchQuery: '',
+    articles: [],
+    isLoading: false,
+    selectedCity: null
+  };
+
+  // Popular cities and trending topics
+  const popularCities = ['New York', 'London', 'Tokyo', 'Paris'];
+  const trendingTopics = ['#TECHNOLOGY', '#CLIMATE', '#SPORTS'];
+
+  // DOM elements
+  const screens = document.querySelectorAll('.screen');
+  const searchInputs = document.querySelectorAll('.search input');
+  const cityButtons = document.querySelectorAll('.city');
+  const chipButtons = document.querySelectorAll('.chip');
+
+  // Show specific screen
+  function showScreen(screenId) {
+    screens.forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    state.currentScreen = screenId;
+  }
+
+  // Fetch news from API
+  async function fetchNews(location) {
+    if (!location.trim()) return;
+    
+    state.isLoading = true;
+    showLoadingState();
+    
+    try {
+      const response = await fetch(`/news?location=${encodeURIComponent(location)}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        state.articles = data.articles;
+        state.searchQuery = location;
+        showResultsScreen(data);
+      } else if (response.status === 401) {
+        showErrorScreen('Invalid or missing API key', 'Please check your API key');
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      showErrorScreen('Network Error', 'Please try again later');
+    } finally {
+      state.isLoading = false;
+    }
+  }
+
+  // Display loading state
+  function showLoadingState() {
+    showScreen('screen-3');
+    const list = document.querySelector('#screen-3 .list');
+    list.innerHTML = `
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading news...</p>
+      </div>
+    `;
+  }
+
+  // Display results screen
+  function showResultsScreen(data) {
+    showScreen('screen-3');
+    const list = document.querySelector('#screen-3 .list');
+    const searchInput = document.querySelector('#screen-3 .search input');
+    searchInput.value = data.location;
+    
+    if (data.articles && data.articles.length > 0) {
+      list.innerHTML = data.articles.map((article, index) => `
+        <div class="item">
+          <div class="item-content">
+            <h4>${article.title}</h4>
+            <div class="meta">
+              <span class="source">${article.source}</span>
+              <a href="${article.url}" target="_blank">${new URL(article.url).hostname}...</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      showEmptyScreen(data.location);
+    }
+  }
+
+  // Display error screen
+  function showErrorScreen(title, message) {
+    showScreen('screen-4');
+    const alert = document.querySelector('#screen-4 .alert');
+    alert.innerHTML = `
+      <h5>${title}</h5>
+      <p>${message}</p>
+    `;
+  }
+
+  // Display empty state screen
+  function showEmptyScreen(location) {
+    showScreen('screen-6');
+    const searchInput = document.querySelector('#screen-6 .search input');
+    searchInput.value = location;
+  }
+
+  // Handle city button clicks
+  function setupCityButtons() {
+    const screen1Cities = document.querySelectorAll('#screen-1 .city');
+    screen1Cities.forEach(city => {
+      city.addEventListener('click', () => {
+        const cityName = city.textContent.replace(/\n/g, ' ').trim();
+        fetchNews(cityName);
+      });
+    });
+  }
+
+  // Handle trending topic chips
+  function setupChipButtons() {
+    const screen1Chips = document.querySelectorAll('#screen-1 .chip');
+    screen1Chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const topic = chip.textContent.replace('#', '').toLowerCase();
+        fetchNews(topic);
+      });
+    });
+  }
+
+  // Handle search input
+  function setupSearchInput() {
+    searchInputs.forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          fetchNews(input.value);
+        }
+      });
+      
+      input.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
+      });
+    });
+  }
+
+  // Setup navigation buttons (if any back buttons)
+  function setupNavigation() {
+    // Add back button functionality if needed
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('back-btn')) {
+        showScreen('screen-1');
+      }
+    });
+  }
+
+  // Add CSS for loading spinner and animations
+  function addDynamicStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(79, 124, 255, 0.2);
+        border-top-color: #4f7cff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 16px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .loading-state p {
+        color: #b8bdc7;
+        font-size: 14px;
+        margin: 0;
+      }
+
+      .search input:focus {
+        outline: 1px solid var(--accent);
+        background: rgba(79, 124, 255, 0.05);
+      }
+
+      .city {
+        cursor: pointer;
+      }
+
+      .chip {
+        cursor: pointer;
+      }
+
+      .item-content h4 {
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .item-content h4:hover {
+        color: var(--accent);
+      }
+
+      .meta a {
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .meta a:hover {
+        color: #5a8eff;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Initialize app
+  function init() {
+    addDynamicStyles();
+    setupCityButtons();
+    setupChipButtons();
+    setupSearchInput();
+    setupNavigation();
+    
+    // Set initial screen
+    showScreen('screen-1');
+  }
+
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

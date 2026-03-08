@@ -8,7 +8,7 @@ import os
 app = FastAPI(title="NewsFlash API")
 
 # Replace with your actual NewsAPI key
-NEWS_API_KEY = "62f425894ac84ca482200c1a499e6d4c"
+NEWS_API_KEY = "YOUR_API_KEY"
 
 def fetch_news(location: str, api_key: str):
     url = f"https://newsapi.org/v2/everything?q={location}&sortBy=popularity&apiKey={api_key}"
@@ -43,3 +43,4 @@ def get_news(location: str = Query(..., min_length=2)):
         raise e
 
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
+
